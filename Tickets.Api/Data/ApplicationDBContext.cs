@@ -17,6 +17,20 @@ namespace Tickets.Api.Data
             
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder){
+            modelBuilder.Entity<Ticket>()
+                .Property(t => t.Status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Ticket>()
+                .Property(t => t.Priority)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Ticket>()
+                .Property(t => t.Category)
+                .HasConversion<string>();
+        }
+
         public DbSet <Ticket> Tickets { get; set; }//manipulate ticket table
     }
 }

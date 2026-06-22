@@ -17,6 +17,13 @@ namespace Notifications.Api.Data
             
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder){
+            modelBuilder.Entity<Notification>()
+                .Property(n => n.Type)
+                .HasConversion<string>();
+        }
+
         public DbSet <Notification> Notification { get; set; }//manipulate ticket table
+
     }
 }

@@ -11,7 +11,7 @@ namespace Notifications.Api.Models
             set;
         } = Guid.NewGuid();
 
-        public Guid TicketId{// plain Guid, not a FK - different DB
+        public Guid TicketId{// plain Guid, not a FK (different DB)
             get;
             set;
         }
