@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Tickets.Api.Data;
+using Tickets.Api.Mappers;
 
 namespace Tickets.Api.Controllers
 {
@@ -15,7 +16,9 @@ namespace Tickets.Api.Controllers
 
         [HttpGet]
         public IActionResult GetAll(){
-            var tickets = _context.Tickets.ToList();
+            var tickets = _context.Tickets.ToList().Select(//select works as a mapper in js
+                s => s.ToTicketDto()
+                );
 
             return Ok(tickets);
         }
@@ -27,7 +30,7 @@ namespace Tickets.Api.Controllers
             if (ticket == null)
                 return NotFound();
 
-            return Ok(ticket);
+            return Ok(ticket.ToTicketDto());
         }
     }
 }
