@@ -1,0 +1,28 @@
+services:
+  tickets-db:
+    image: postgres:16
+    container_name: tickets-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${TICKETS_DB_PASSWORD}
+      POSTGRES_DB: ticketsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - tickets-pgdata:/var/lib/postgresql/data
+
+  notifications-db:
+    image: postgres:16
+    container_name: notifications-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${NOTIFICATIONS_DB_PASSWORD}
+      POSTGRES_DB: notificationsdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - notifications-pgdata:/var/lib/postgresql/data
+
+volumes:
+  tickets-pgdata:
+  notifications-pgdata:
