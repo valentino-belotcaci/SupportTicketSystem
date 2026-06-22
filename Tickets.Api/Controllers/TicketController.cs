@@ -18,34 +18,33 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTickets(
-            [FromQuery] TicketQueries query)
+        public IActionResult GetTickets([FromQuery] TicketQuery query)
         {
-            var query = _context.Tickets.AsQueryable();
+            var tickets = _context.Tickets.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(category) &&
-                Enum.TryParse<TicketCategory>(category, true, out var parsedCategory))
+            if (!string.IsNullOrWhiteSpace(query.Category) &&
+                Enum.TryParse<TicketCategory>(query.Category, true, out var category))
             {
-                query = query.Where(t => t.Category == parsedCategory);
+                tickets = tickets.Where(t => t.Category == category);
             }
 
-            if (!string.IsNullOrWhiteSpace(status) &&
-                Enum.TryParse<TicketStatus>(status, true, out var parsedStatus))
+            if (!string.IsNullOrWhiteSpace(query.Status) &&
+                Enum.TryParse<TicketStatus>(query.Status, true, out var status))
             {
-                query = query.Where(t => t.Status == parsedStatus);
+                tickets = tickets.Where(t => t.Status == status);
             }
 
-            if (!string.IsNullOrWhiteSpace(priority) &&
-                Enum.TryParse<TicketPriority>(priority, true, out var parsedPriority))
+            if (!string.IsNullOrWhiteSpace(query.Priority) &&
+                Enum.TryParse<TicketPriority>(query.Priority, true, out var priority))
             {
-                query = query.Where(t => t.Priority == parsedPriority);
+                tickets = tickets.Where(t => t.Priority == priority);
             }
 
-            var tickets = query
+            var result = tickets
                 .Select(t => t.ToTicketDto())
                 .ToList();
 
-            return Ok(tickets);
+            return Ok(result);
         }
 
 
