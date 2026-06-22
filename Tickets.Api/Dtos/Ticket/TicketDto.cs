@@ -5,6 +5,11 @@ namespace Tickets.Api.Dtos.Ticket
 {
     public class TicketDto
     {
+        public Guid Id {    //property declaration ( field with getter and setter )
+            get;
+            set;
+        } = Guid.NewGuid();
+        
         [Required]
         [MinLength(3, ErrorMessage = "Title must be at least 3 characters")]
         [MaxLength(100, ErrorMessage = "Title cannot exceed 100 characters")]

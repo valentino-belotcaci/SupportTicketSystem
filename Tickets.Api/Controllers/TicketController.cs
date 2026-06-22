@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Tickets.Api.Data;
+using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 
 namespace Tickets.Api.Controllers
@@ -31,6 +32,19 @@ namespace Tickets.Api.Controllers
                 return NotFound();
 
             return Ok(ticket.ToTicketDto());
+        }
+
+        [HttpPost]
+        public IActionResult create([FromBody] CreateTicketRequestDto ticketDto) {
+
+            var ticketModel = ticketDto.ToTicketFromCreateDto();
+            _context.Tickets.Add(ticketModel);
+            _context.SaveChanges();
+            return CreatedAtAction(
+                nameof(GetById), //execute getById method
+                new { id = ticketModel.Id}, //pass this new object into the id of the getById method
+                ticketModel.ToTicketDto()  //then return into the form of ticketDto
+            );
         }
     }
 }
