@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Notifications.Api.Models;
 
@@ -23,7 +19,7 @@ namespace Notifications.Api.Data
                 .HasConversion<string>();
         }
 
-        public DbSet <Notification> Notification { get; set; }//manipulate ticket table
+        public DbSet <Notification> Notifications { get; set; }//manipulate notification table
 
     }
 }

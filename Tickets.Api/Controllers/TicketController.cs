@@ -3,7 +3,7 @@ using Tickets.Api.Data;
 
 namespace Tickets.Api.Controllers
 {
-    [Route("api/ticket")]
+    [Route("api/tickets")]
     [ApiController]
     public class TicketController : ControllerBase
     {
