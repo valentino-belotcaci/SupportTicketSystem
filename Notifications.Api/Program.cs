@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDBContext>(options => {
+builder.Services.AddDbContext<ApplicationDBContext>(options => {/////////////////////ciaooooooooooooooooooooo
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
