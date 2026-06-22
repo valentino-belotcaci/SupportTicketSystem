@@ -3,6 +3,7 @@ using Tickets.Api.Data;
 using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
+using Tickets.Api.Queries;
 
 namespace Tickets.Api.Controllers
 {
@@ -18,9 +19,7 @@ namespace Tickets.Api.Controllers
 
         [HttpGet]
         public IActionResult GetTickets(
-            [FromQuery] string? category,
-            [FromQuery] string? status,
-            [FromQuery] string? priority)
+            [FromQuery] TicketQueries query)
         {
             var query = _context.Tickets.AsQueryable();
 
