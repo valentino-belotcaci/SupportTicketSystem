@@ -90,5 +90,21 @@ namespace Tickets.Api.Controllers
 
             return Ok(ticket.ToTicketDto());
         }
+
+        [HttpPatch("{id}/assign")]
+        public IActionResult PatchTicketAssign(Guid id, [FromBody] AssignTicketDto request)
+        {
+            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+
+            if (ticket == null)
+                return NotFound();
+
+
+            ticket.AssignedTo = request.AssignedTo;
+
+            _context.SaveChanges();
+
+            return Ok(ticket.ToTicketDto());
+        }
     }
 }

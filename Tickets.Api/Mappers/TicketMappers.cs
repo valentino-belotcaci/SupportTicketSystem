@@ -13,7 +13,8 @@ namespace Tickets.Api.Mappers
                 Status = ticketModel.Status,
                 Priority = ticketModel.Priority,
                 Category = ticketModel.Category,
-                CreatedBy = ticketModel.CreatedBy
+                CreatedBy = ticketModel.CreatedBy,
+                AssignedTo = ticketModel.AssignedTo
             };
         }
 

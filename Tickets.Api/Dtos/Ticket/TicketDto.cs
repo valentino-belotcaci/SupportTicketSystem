@@ -27,6 +27,8 @@ namespace Tickets.Api.Dtos.Ticket
         [Required]
         public TicketCategory Category { get; set; }
 
+        public string? AssignedTo { get; set; } // optional field
+
         [Required]
         public string CreatedBy { get; set; } = string.Empty;
     }
