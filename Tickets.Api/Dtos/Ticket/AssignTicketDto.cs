@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tickets.Api.Dtos.Ticket
 {
     public class AssignTicketDto
     {
-        public string AssignedTo {get; set;} = string.Empty;
+        [Required]
+        public string AssignedTo { get; set; } = string.Empty;
     }
 }

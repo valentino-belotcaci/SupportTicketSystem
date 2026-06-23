@@ -1,4 +1,3 @@
-using System;
 using Tickets.Api.Enums;
 
 namespace Tickets.Api.Models

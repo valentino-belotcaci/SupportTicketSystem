@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Tickets.Api.Enums;
 
 namespace Tickets.Api.Dtos.Ticket
@@ -13,5 +12,7 @@ namespace Tickets.Api.Dtos.Ticket
     public TicketCategory Category { get; set; }
     public string? AssignedTo { get; set; }
     public string CreatedBy { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; } 
 }
 }

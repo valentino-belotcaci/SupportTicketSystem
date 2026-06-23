@@ -5,8 +5,10 @@ namespace Tickets.Api.Mappers
 {
     public static class TicketMappers
     {
-        public static TicketDto ToTicketDto(this Ticket ticketModel) {
-            return new TicketDto{
+        public static TicketDto ToTicketDto(this Ticket ticketModel)
+        {
+            return new TicketDto
+            {
                 Id = ticketModel.Id,
                 Title = ticketModel.Title,
                 Description = ticketModel.Description,
@@ -14,9 +16,11 @@ namespace Tickets.Api.Mappers
                 Priority = ticketModel.Priority,
                 Category = ticketModel.Category,
                 CreatedBy = ticketModel.CreatedBy,
-                AssignedTo = ticketModel.AssignedTo
+                AssignedTo = ticketModel.AssignedTo,
+                CreatedAt = ticketModel.CreatedAt, // ← add
+                UpdatedAt = ticketModel.UpdatedAt  // ← add
             };
-        }
+}
 
         public static Ticket ToTicketFromCreateDto(this CreateTicketRequestDto ticketDto){
             return new Ticket{
