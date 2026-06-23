@@ -115,7 +115,16 @@ namespace Tickets.Api.Controllers
             if(ticket == null)
                 return NotFound();
             
-            ticket.
+            ticket.Title = request.Title;
+            ticket.Description = request.Description;
+            ticket.Priority = request.Priority;
+            ticket.Category = request.Category;
+            ticket.AssignedTo = request.AssignedTo;
+            ticket.UpdatedAt = DateTime.UtcNow;
+
+            _context.SaveChanges();//send to db
+
+            return Ok(ticket.ToTicketDto());
         }
     }
 }
