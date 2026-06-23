@@ -5,6 +5,7 @@ using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
 using Microsoft.AspNetCore.JsonPatch;
+using Tickets.Api.Models;
 
 namespace Tickets.Api.Controllers
 {
@@ -79,6 +80,9 @@ namespace Tickets.Api.Controllers
 
             if (ticket == null)
                 return NotFound();
+
+            if (request.Status <= ticket.Status)
+                return BadRequest("Status cannot be moved backwards."); 
 
             ticket.Status = request.Status;
 
