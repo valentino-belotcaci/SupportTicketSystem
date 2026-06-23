@@ -4,8 +4,6 @@ using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
-using Microsoft.AspNetCore.JsonPatch;
-using Tickets.Api.Models;
 
 namespace Tickets.Api.Controllers
 {
@@ -20,7 +18,7 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTickets([FromQuery] TicketQuery query)
+        public IActionResult GetAll([FromQuery] TicketQuery query)
         {
             var tickets = _context.Tickets.AsQueryable();
 
@@ -51,7 +49,7 @@ namespace Tickets.Api.Controllers
 
 
         [HttpGet("{id}")]
-        public IActionResult GetTicketsById([FromRoute] Guid id){
+        public IActionResult GetById([FromRoute] Guid id){
             var ticket = _context.Tickets.Find(id);
 
             if (ticket == null)
@@ -61,20 +59,20 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult create([FromBody] CreateTicketRequestDto ticketDto) {
+        public IActionResult Create([FromBody] CreateTicketRequestDto ticketDto) {
 
             var ticketModel = ticketDto.ToTicketFromCreateDto();
             _context.Tickets.Add(ticketModel);
             _context.SaveChanges();
             return CreatedAtAction(
-                nameof(GetTicketsById), //execute getById method
+                nameof(GetById), //execute getById method
                 new { id = ticketModel.Id}, //pass this new object into the id of the getById method
                 ticketModel.ToTicketDto()  //then return into the form of ticketDto
             );
         }
 
         [HttpPatch("{id}/status")]
-        public IActionResult PatchTicketStatus(Guid id, [FromBody] UpdateStatusDto request)
+        public IActionResult UpdateStatus([FromRoute] Guid id, [FromBody] UpdateStatusDto request)
         {
             var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
 
@@ -85,6 +83,7 @@ namespace Tickets.Api.Controllers
                 return BadRequest("Status cannot be moved backwards."); 
 
             ticket.Status = request.Status;
+            ticket.UpdatedAt = DateTime.UtcNow;
 
             _context.SaveChanges();
 
@@ -92,7 +91,7 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpPatch("{id}/assign")]
-        public IActionResult PatchTicketAssign(Guid id, [FromBody] AssignTicketDto request)
+        public IActionResult AssignTicket([FromRoute] Guid id, [FromBody] AssignTicketDto request)
         {
             var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
 
@@ -101,6 +100,7 @@ namespace Tickets.Api.Controllers
 
 
             ticket.AssignedTo = request.AssignedTo;
+            ticket.UpdatedAt = DateTime.UtcNow;
 
             _context.SaveChanges();
 
@@ -108,7 +108,7 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpPut("{id}")] 
-        public IActionResult UpdateTicket([FromRoute] Guid id, [FromBody] UpdateTicketDto request)
+        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateTicketDto request)
         {
             var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
 
@@ -128,7 +128,7 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpDelete("{id}")] 
-        public IActionResult DeleteTicket([FromRoute] Guid id)
+        public IActionResult Delete([FromRoute] Guid id)
         {
             var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
 
