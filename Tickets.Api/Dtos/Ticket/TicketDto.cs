@@ -19,6 +19,8 @@ namespace Tickets.Api.Dtos.Ticket
         [MinLength(10, ErrorMessage = "Description must be at least 10 characters")]
         public string Description { get; set; } = string.Empty;
 
+        public TicketStatus Status { get; set; }
+
         [Required]
         public TicketPriority Priority { get; set; }
 

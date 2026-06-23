@@ -4,6 +4,7 @@ using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Tickets.Api.Controllers
 {
@@ -71,6 +72,19 @@ namespace Tickets.Api.Controllers
             );
         }
 
-        [HttpPatch]
+        [HttpPatch("{id}/status")]
+        public IActionResult PatchTicketStatus(Guid id, [FromBody] UpdateStatusDto request)
+        {
+            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+
+            if (ticket == null)
+                return NotFound();
+
+            ticket.Status = request.Status;
+
+            _context.SaveChanges();
+
+            return Ok(ticket.ToTicketDto());
+        }
     }
 }

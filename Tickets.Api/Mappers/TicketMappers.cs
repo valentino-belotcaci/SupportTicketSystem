@@ -10,6 +10,7 @@ namespace Tickets.Api.Mappers
                 Id = ticketModel.Id,
                 Title = ticketModel.Title,
                 Description = ticketModel.Description,
+                Status = ticketModel.Status,
                 Priority = ticketModel.Priority,
                 Category = ticketModel.Category,
                 CreatedBy = ticketModel.CreatedBy
