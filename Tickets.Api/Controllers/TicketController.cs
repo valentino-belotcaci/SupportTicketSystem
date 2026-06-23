@@ -126,5 +126,20 @@ namespace Tickets.Api.Controllers
 
             return Ok(ticket.ToTicketDto());
         }
+
+        [HttpDelete("{id}")] 
+        public IActionResult DeleteTicket([FromRoute] Guid id)
+        {
+            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+
+            if(ticket == null)
+                return NotFound();
+
+            _context.Tickets.Remove(ticket);
+
+            _context.SaveChanges();
+
+            return NoContent();//success
+        }
     }
 }
