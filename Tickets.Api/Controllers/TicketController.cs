@@ -70,5 +70,7 @@ namespace Tickets.Api.Controllers
                 ticketModel.ToTicketDto()  //then return into the form of ticketDto
             );
         }
+
+        [HttpPatch]
     }
 }
