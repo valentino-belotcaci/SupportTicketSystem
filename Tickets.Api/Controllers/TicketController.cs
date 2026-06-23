@@ -106,5 +106,16 @@ namespace Tickets.Api.Controllers
 
             return Ok(ticket.ToTicketDto());
         }
+
+        [HttpPut("{id}")] 
+        public IActionResult UpdateTicket([FromRoute] Guid id, [FromBody] UpdateTicketDto request)
+        {
+            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+
+            if(ticket == null)
+                return NotFound();
+            
+            ticket.
+        }
     }
 }
