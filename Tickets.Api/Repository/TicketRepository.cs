@@ -32,6 +32,38 @@ namespace Tickets.Api.Repository
             return ticketModel;
         }
 
+        public async Task<Ticket?> UpdateStatusAsync(Guid id, UpdateStatusDto request)
+        {
+            var existingTicket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+
+            if (existingTicket == null)
+                return null;
+
+
+            existingTicket.Status = request.Status;
+            existingTicket.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return existingTicket;
+        }
+
+        public async Task<Ticket?> AssignTicketAsync(Guid id, AssignTicketDto request)
+        {
+            var existingTicket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+
+            if (existingTicket == null)
+                return null;
+
+
+            existingTicket.AssignedTo = request.AssignedTo;
+            existingTicket.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return existingTicket;
+        }
+
         public async Task<Ticket?> UpdateAsync(Guid id, UpdateTicketDto request)
         {
             var existingTicket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
@@ -53,16 +85,16 @@ namespace Tickets.Api.Repository
 
         public async Task<Ticket?> DeleteAsync(Guid id)
         {
-            var stockModel = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            var ticketModel = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
             
-            if (stockModel == null)
+            if (ticketModel == null)
                 return null;
 
-            _context.Tickets.Remove(stockModel);
+            _context.Tickets.Remove(ticketModel);
 
             await _context.SaveChangesAsync();
 
-            return stockModel;
+            return ticketModel;
         }
     }
 }

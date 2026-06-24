@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Tickets.Api.Data;
 using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
@@ -13,12 +12,10 @@ namespace Tickets.Api.Controllers
     [ApiController]
     public class TicketController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
         private readonly ITicketRepository _ticketRepo;
-        public TicketController(ApplicationDBContext context, ITicketRepository ticketRepo) {
+        public TicketController(ITicketRepository ticketRepo) {
             
             _ticketRepo = ticketRepo;
-            _context = context;
         }
 
         [HttpGet]
@@ -58,8 +55,9 @@ namespace Tickets.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateTicketRequestDto ticketDto) {
 
             var ticketModel = ticketDto.ToTicketFromCreateDto();
-            _context.Tickets.Add(ticketModel);
-            await _context.SaveChangesAsync();
+            
+            await _ticketRepo.CreateAsync(ticketModel);
+
             return CreatedAtAction(
                 nameof(GetById), //execute getById method
                 new { id = ticketModel.Id}, //pass this new object into the id of the getById method
@@ -70,35 +68,26 @@ namespace Tickets.Api.Controllers
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromBody] UpdateStatusDto request)
         {
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            var existing = await _ticketRepo.GetByIdAsync(id);
 
-            if (ticket == null)
+            if (existing == null)
                 return NotFound();
 
-            if (request.Status <= ticket.Status)
+            if (request.Status <= existing.Status)
                 return BadRequest("Status cannot be moved backwards."); 
+            
+            var ticket = await _ticketRepo.UpdateStatusAsync(id, request);
 
-            ticket.Status = request.Status;
-            ticket.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(ticket.ToTicketDto());
+            return Ok(ticket!.ToTicketDto());
         }
 
         [HttpPatch("{id}/assign")]
         public async Task<IActionResult> AssignTicket([FromRoute] Guid id, [FromBody] AssignTicketDto request)
         {
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            var ticket = await _ticketRepo.AssignTicketAsync(id, request);
 
             if (ticket == null)
                 return NotFound();
-
-
-            ticket.AssignedTo = request.AssignedTo;
-            ticket.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
 
             return Ok(ticket.ToTicketDto());
         }
@@ -106,19 +95,11 @@ namespace Tickets.Api.Controllers
         [HttpPut("{id}")] 
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTicketDto request)
         {
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            var ticket = await _ticketRepo.UpdateAsync(id, request);
 
             if(ticket == null)
                 return NotFound();
             
-            ticket.Title = request.Title;
-            ticket.Description = request.Description;
-            ticket.Priority = request.Priority;
-            ticket.Category = request.Category;
-            ticket.AssignedTo = request.AssignedTo;
-            ticket.UpdatedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();//send to db
 
             return Ok(ticket.ToTicketDto());
         }
@@ -126,14 +107,11 @@ namespace Tickets.Api.Controllers
         [HttpDelete("{id}")] 
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
+            var ticket = await _ticketRepo.DeleteAsync(id);
 
             if(ticket == null)
                 return NotFound();
 
-            _context.Tickets.Remove(ticket);
-
-            await _context.SaveChangesAsync();
 
             return NoContent();//success
         }
