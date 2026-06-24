@@ -46,6 +46,17 @@ namespace Notifications.Api.Controllers
             );
         }
 
+        [HttpGet("ticket/{ticketId}")]
+        public async Task<IActionResult> GetTicketNotifications ([FromRoute] Guid ticketId)
+        {
+            var notificationModel = await _notifictionRepo.GetTicketNotificationsAsync(ticketId);
+
+            if(notificationModel == null)
+                return NotFound();
+
+            return Ok(notificationModel);
+        }
+
         
     }
 }

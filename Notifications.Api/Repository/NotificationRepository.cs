@@ -3,6 +3,7 @@ using Notifications.Api.Data;
 using Notifications.Api.Interfaces;
 using Notifications.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Notifications.Api.Repository
 {
@@ -28,6 +29,12 @@ namespace Notifications.Api.Repository
             _context.Notifications.Add(notificationModel);
             await _context.SaveChangesAsync();
             return notificationModel;
+        }
+
+        public async Task<List<Notification>> GetTicketNotificationsAsync(Guid ticketId){
+            return await _context.Notifications
+            .Where(n => n.TicketId == ticketId)
+            .ToListAsync();
         }
     }
 }
