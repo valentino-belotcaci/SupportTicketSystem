@@ -107,11 +107,30 @@ namespace Tickets.Api.Repository
             if (existingTicket == null)
                 return null;
 
+            var oldAssignment = existingTicket.AssignedTo;
 
             existingTicket.AssignedTo = request.AssignedTo;
             existingTicket.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+
+            var client = _httpClientFactory.CreateClient();
+
+            var payload = new{
+                ticketId = existingTicket.Id,
+                type = 2,
+                message = $" Ticket '{existingTicket.Title}' changed Assignment from '{oldAssignment}' to '{request.AssignedTo}'"
+            };
+
+            try {
+                await client.PostAsJsonAsync(
+                    "http://localhost:5201/api/notifications",
+                    payload
+                );
+            }catch(Exception ex) {
+                _logger.LogError(ex, "Failed to notify Notifications.Api for ticket {TicketId}", existingTicket.Id);
+
+            }
 
             return existingTicket;
         }
