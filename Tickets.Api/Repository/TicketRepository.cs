@@ -72,11 +72,30 @@ namespace Tickets.Api.Repository
             if (existingTicket == null)
                 return null;
 
+            var oldStatus = existingTicket.Status;
 
             existingTicket.Status = request.Status;
             existingTicket.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+
+            var client = _httpClientFactory.CreateClient();
+
+            var payload = new{
+                ticketId = existingTicket.Id,
+                type = 1,
+                message = $" Ticket '{existingTicket.Title}' changed status from '{oldStatus}' to '{request.Status}'"
+            };
+
+            try {
+                await client.PostAsJsonAsync(
+                    "http://localhost:5201/api/notifications",
+                    payload
+                );
+            }catch(Exception ex) {
+                _logger.LogError(ex, "Failed to notify Notifications.Api for ticket {TicketId}", existingTicket.Id);
+
+            }
 
             return existingTicket;
         }
