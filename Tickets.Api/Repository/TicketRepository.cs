@@ -9,9 +9,13 @@ namespace Tickets.Api.Repository
     public class TicketRepository : ITicketRepository
     {
         private readonly ApplicationDBContext _context;
-        public TicketRepository(ApplicationDBContext context)//dependency injection
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<TicketRepository> _logger;
+        public TicketRepository(ApplicationDBContext context,IHttpClientFactory httpClientFactory, ILogger<TicketRepository> logger)//dependency injection
         {
             _context = context;
+            _httpClientFactory = httpClientFactory;//inject IHttpClientFactory into the repository
+            _logger = logger;   
         }
 
         public async Task<List<Ticket>> GetAllAsync()
@@ -29,6 +33,31 @@ namespace Tickets.Api.Repository
         {
             _context.Tickets.Add(ticketModel);
             await _context.SaveChangesAsync();
+
+            //notify Notifications.Api
+            var client = _httpClientFactory.CreateClient();
+
+            var payload = new{
+
+                ticketId = ticketModel.Id,
+                type = 0, //0=just created
+                message = $"Ticket '{ticketModel.Title}' was created"
+            };
+
+            try
+            {
+                await client.PostAsJsonAsync(
+                    "http://localhost:5201/api/notifications",
+                    payload
+                );
+            }
+            catch (Exception ex)
+            {
+                //notification failed, don't fail the ticket creation, we just log it
+                _logger.LogError(ex, "Failed to notify Notifications.Api for ticket {TicketId}", ticketModel.Id);
+
+                //in future ill use message queue (RabbitMQ) to guarantee delivery
+            }
             return ticketModel;
         }
 
