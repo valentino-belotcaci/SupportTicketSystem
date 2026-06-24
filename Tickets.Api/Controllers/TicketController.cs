@@ -46,7 +46,7 @@ namespace Tickets.Api.Controllers
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id){
-            var ticket = await _context.Tickets.FindAsync(id);
+            var ticket = await _ticketRepo.GetByIdAsync(id);
 
             if (ticket == null)
                 return NotFound();
