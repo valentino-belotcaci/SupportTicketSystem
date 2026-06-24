@@ -4,7 +4,8 @@ using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
-using Microsoft.EntityFrameworkCore;// to use async
+using Microsoft.EntityFrameworkCore;
+using Tickets.Api.Interfaces;// to use async
 
 namespace Tickets.Api.Controllers
 {
@@ -13,37 +14,31 @@ namespace Tickets.Api.Controllers
     public class TicketController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
-        public TicketController(ApplicationDBContext context) {
-
+        private readonly ITicketRepository _ticketRepo;
+        public TicketController(ApplicationDBContext context, ITicketRepository ticketRepo) {
+            
+            _ticketRepo = ticketRepo;
             _context = context;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] TicketQuery query)
-        {
-            var tickets = _context.Tickets.AsQueryable();
+{
+            var tickets = await _ticketRepo.GetAllAsync();
 
             if (!string.IsNullOrWhiteSpace(query.Category) &&
                 Enum.TryParse<TicketCategory>(query.Category, true, out var category))
-            {
-                tickets = tickets.Where(t => t.Category == category);
-            }
+                tickets = tickets.Where(t => t.Category == category).ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Status) &&
                 Enum.TryParse<TicketStatus>(query.Status, true, out var status))
-            {
-                tickets = tickets.Where(t => t.Status == status);
-            }
+                tickets = tickets.Where(t => t.Status == status).ToList();
 
             if (!string.IsNullOrWhiteSpace(query.Priority) &&
                 Enum.TryParse<TicketPriority>(query.Priority, true, out var priority))
-            {
-                tickets = tickets.Where(t => t.Priority == priority);
-            }
+                tickets = tickets.Where(t => t.Priority == priority).ToList();
 
-            var result = await tickets
-                .Select(t => t.ToTicketDto())
-                .ToListAsync();
+            var result = tickets.Select(t => t.ToTicketDto()).ToList();
 
             return Ok(result);
         }
