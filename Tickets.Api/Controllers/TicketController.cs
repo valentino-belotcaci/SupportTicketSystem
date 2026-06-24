@@ -73,9 +73,9 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpPatch("{id}/status")]
-        public IActionResult UpdateStatus([FromRoute] Guid id, [FromBody] UpdateStatusDto request)
+        public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromBody] UpdateStatusDto request)
         {
-            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
 
             if (ticket == null)
                 return NotFound();
@@ -86,7 +86,7 @@ namespace Tickets.Api.Controllers
             ticket.Status = request.Status;
             ticket.UpdatedAt = DateTime.UtcNow;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(ticket.ToTicketDto());
         }
