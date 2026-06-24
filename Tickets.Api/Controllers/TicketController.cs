@@ -129,16 +129,16 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpDelete("{id}")] 
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
 
             if(ticket == null)
                 return NotFound();
 
             _context.Tickets.Remove(ticket);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return NoContent();//success
         }
