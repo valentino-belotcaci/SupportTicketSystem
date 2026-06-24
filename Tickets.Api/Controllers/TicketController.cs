@@ -50,8 +50,8 @@ namespace Tickets.Api.Controllers
 
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] Guid id){
-            var ticket = _context.Tickets.Find(id);
+        public async Task<IActionResult> GetById([FromRoute] Guid id){
+            var ticket = await _context.Tickets.FindAsync(id);
 
             if (ticket == null)
                 return NotFound();
