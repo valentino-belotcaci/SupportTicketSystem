@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Notifications.Api.Dtos.Notification;
 using Notifications.Api.Interfaces;
 using Notifications.Api.Mappers;
+using Notifications.Api.Dtos;
 
 namespace Notifications.Api.Controllers
 {
@@ -23,11 +23,20 @@ namespace Notifications.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id){
+            var notification = await _notifictionRepo.GetByIdAsync(id);
+
+            if (notification == null)
+                return NotFound();
+
+            return Ok(notification.ToNotificationDto());
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create ([FromBody] CreateNotificationRequestDto notificationDto)
         {
-            var notificationModel = notificationDto.ToNotificationFromCreatedDto();
+            var notificationModel = notificationDto.ToNotificationFromCreateDto();
             await _notifictionRepo.CreateAsync(notificationModel);
 
             return CreatedAtAction(

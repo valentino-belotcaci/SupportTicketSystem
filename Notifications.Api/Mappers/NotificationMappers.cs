@@ -1,6 +1,5 @@
 
 using Notifications.Api.Models;
-using Notifications.Api.Dtos.Notification;
 using Notifications.Api.Dtos;
 
 namespace Notifications.Api.Mappers
@@ -18,7 +17,7 @@ namespace Notifications.Api.Mappers
                 SentAt = notificationModel.SentAt,
             };
         }
-        public static Notification ToNotificationFromCreatedDto(this CreateNotificationRequestDto notificationDto){
+        public static Notification ToNotificationFromCreateDto(this CreateNotificationRequestDto notificationDto){
             return new Notification{
                 TicketId = notificationDto.TicketId,
                 Type = notificationDto.Type,

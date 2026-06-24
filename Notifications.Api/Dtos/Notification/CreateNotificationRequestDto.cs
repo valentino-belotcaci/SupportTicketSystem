@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Notifications.Api.Enums;
 
-namespace Notifications.Api.Dtos.Notification
+namespace Notifications.Api.Dtos
 {
     public class CreateNotificationRequestDto
     {
