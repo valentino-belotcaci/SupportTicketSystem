@@ -51,7 +51,7 @@ namespace Notifications.Api.Controllers
         {
             var notificationModel = await _notifictionRepo.GetTicketNotificationsAsync(ticketId);
 
-            if(notificationModel == null)
+            if (!notificationModel.Any())//returns true if there is at least one item
                 return NotFound();
 
             var result = notificationModel.Select(n => n.ToNotificationDto()).ToList();
