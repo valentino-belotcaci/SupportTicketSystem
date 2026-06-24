@@ -92,9 +92,9 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpPatch("{id}/assign")]
-        public IActionResult AssignTicket([FromRoute] Guid id, [FromBody] AssignTicketDto request)
+        public async Task<IActionResult> AssignTicket([FromRoute] Guid id, [FromBody] AssignTicketDto request)
         {
-            var ticket = _context.Tickets.FirstOrDefault(t => t.Id == id);
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == id);
 
             if (ticket == null)
                 return NotFound();
@@ -103,7 +103,7 @@ namespace Tickets.Api.Controllers
             ticket.AssignedTo = request.AssignedTo;
             ticket.UpdatedAt = DateTime.UtcNow;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(ticket.ToTicketDto());
         }
