@@ -3,7 +3,6 @@ using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
-using Microsoft.EntityFrameworkCore;
 using Tickets.Api.Interfaces;// to use async
 
 namespace Tickets.Api.Controllers

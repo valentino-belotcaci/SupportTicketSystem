@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Notifications.Api.Data;
+using Notifications.Api.Dtos.Notification;
+using Notifications.Api.Interfaces;
+using Notifications.Api.Mappers;
 
 namespace Notifications.Api.Controllers
 {
@@ -7,27 +9,32 @@ namespace Notifications.Api.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
-        public NotificationController(ApplicationDBContext context) {
-
-            _context = context;
+        private readonly INotificationRepository _notifictionRepo;
+        public NotificationController(INotificationRepository notificationRepo) {
+            _notifictionRepo = notificationRepo;
         }
 
         [HttpGet]
-        public IActionResult GetAll(){
-            var notifications = _context.Notifications.ToList();
+        public async Task<IActionResult> GetAll(){
+            var notificationModel = await _notifictionRepo.GetAllAsync();
 
-            return Ok(notifications);
+            var result = notificationModel.Select(n => n.ToNotificationDto()).ToList();
+
+            return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] Guid id){
-            var notification = _context.Notifications.Find(id);
 
-            if (notification == null)
-                return NotFound();
+        [HttpPost]
+        public async Task<IActionResult> Create ([FromBody] CreateNotificationRequestDto notificationDto)
+        {
+            var notificationModel = notificationDto.ToNotificationFromCreatedDto();
+            await _notifictionRepo.CreateAsync(notificationModel);
 
-            return Ok(notification);
+            return CreatedAtAction(
+                nameof(GetById), //execute getById method
+                new { id = notificationModel.Id}, //pass this new object into the id of the getById method
+                notificationModel.ToNotificationDto()  //then return into the form of ticketDto
+            );
         }
 
         
