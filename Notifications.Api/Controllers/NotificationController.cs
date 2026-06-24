@@ -54,7 +54,9 @@ namespace Notifications.Api.Controllers
             if(notificationModel == null)
                 return NotFound();
 
-            return Ok(notificationModel);
+            var result = notificationModel.Select(n => n.ToNotificationDto()).ToList();
+
+            return Ok(result);
         }
 
         
