@@ -44,6 +44,10 @@ namespace Tickets.Api.Repository
                 message = $"Ticket '{ticketModel.Title}' was created"
             };
 
+            //send http request with payload in the body
+            //then notifications.api receives it
+            //the controller sees POST api/notifications and calls this method that actually creates the notification
+
             try
             {
                 await client.PostAsJsonAsync(
