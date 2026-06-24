@@ -4,7 +4,7 @@ using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;// to use async
 
 namespace Tickets.Api.Controllers
 {
@@ -63,7 +63,7 @@ namespace Tickets.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateTicketRequestDto ticketDto) {
 
             var ticketModel = ticketDto.ToTicketFromCreateDto();
-            await _context.Tickets.AddAsync(ticketModel);
+            _context.Tickets.Add(ticketModel);
             await _context.SaveChangesAsync();
             return CreatedAtAction(
                 nameof(GetById), //execute getById method
