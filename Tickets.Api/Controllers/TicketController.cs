@@ -4,6 +4,7 @@ using Tickets.Api.Dtos.Ticket;
 using Tickets.Api.Mappers;
 using Tickets.Api.Enums;
 using Tickets.Api.Queries;
+using Microsoft.EntityFrameworkCore;
 
 namespace Tickets.Api.Controllers
 {
@@ -18,7 +19,7 @@ namespace Tickets.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] TicketQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] TicketQuery query)
         {
             var tickets = _context.Tickets.AsQueryable();
 
@@ -40,9 +41,9 @@ namespace Tickets.Api.Controllers
                 tickets = tickets.Where(t => t.Priority == priority);
             }
 
-            var result = tickets
+            var result = await tickets
                 .Select(t => t.ToTicketDto())
-                .ToList();
+                .ToListAsync();
 
             return Ok(result);
         }
