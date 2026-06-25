@@ -14,6 +14,7 @@ namespace Notifications.Api.Controllers
             _notifictionRepo = notificationRepo;
         }
 
+        /// <summary>Returns all notifications</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll(){
             var notificationModel = await _notifictionRepo.GetAllAsync();
@@ -23,6 +24,8 @@ namespace Notifications.Api.Controllers
             return Ok(result);
         }
 
+        /// <summary>Returns a single notification by ID</summary>
+        /// <param name="id">The notification GUID</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id){
             var notification = await _notifictionRepo.GetByIdAsync(id);
@@ -33,6 +36,7 @@ namespace Notifications.Api.Controllers
             return Ok(notification.ToNotificationDto());
         }
 
+        /// <summary>Creates a new notification event</summary>
         [HttpPost]
         public async Task<IActionResult> Create ([FromBody] CreateNotificationRequestDto notificationDto)
         {
@@ -46,6 +50,8 @@ namespace Notifications.Api.Controllers
             );
         }
 
+        /// <summary>Returns all notifications for a specific ticket</summary>
+        /// <param name="ticketId">The ticket GUID</param>
         [HttpGet("ticket/{ticketId}")]
         public async Task<IActionResult> GetTicketNotifications ([FromRoute] Guid ticketId)
         {
