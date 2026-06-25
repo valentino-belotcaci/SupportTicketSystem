@@ -20,5 +20,7 @@ namespace Tickets.Api.Interfaces
         Task<Ticket?> DeleteAsync(Guid id);
 
         Task<List<TicketStatusCountDto>> GetTicketCountsGroupedByStatusAsync();
+
+        Task<List<TicketStatusCountDto>> GetTicketCountsGroupedByPriorityAsync();
     }
 }
