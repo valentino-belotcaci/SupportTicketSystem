@@ -15,29 +15,55 @@ namespace Notifications.Api.Services
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<RabbitMQConsumer> _logger;
+        private readonly IConfiguration _configuration;
         private IConnection? _connection;
         private IModel? _channel;
         private const string QueueName = "ticket-events";
 
         public RabbitMQConsumer(
             IServiceScopeFactory scopeFactory,
-            ILogger<RabbitMQConsumer> logger)
+            ILogger<RabbitMQConsumer> logger,
+            IConfiguration configuration)
         {
             _scopeFactory = scopeFactory;
             _logger = logger;
+            _configuration = configuration;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var factory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = _configuration["RabbitMQ:Host"] ?? "localhost",
                 Port = 5672,
                 UserName = "guest",
                 Password = "guest"
             };
 
-            _connection = factory.CreateConnection();
+            // retry up to 5 times with 3 second delay
+            var retries = 5;
+            while (retries > 0)
+            {
+                try
+                {
+                    _connection = factory.CreateConnection();
+                    _logger.LogInformation("Connected to RabbitMQ successfully");
+                    break; // connection succeeded, exit retry loop
+                }
+                catch (Exception ex)
+                {
+                    retries--;
+                    _logger.LogWarning(ex, "RabbitMQ not ready, retrying in 3 seconds... ({Retries} attempts left)", retries);
+                    Thread.Sleep(3000); // wait 3 seconds before retrying
+
+                    if (retries == 0)
+                    {
+                        _logger.LogError("Failed to connect to RabbitMQ after all retries");
+                        return Task.CompletedTask; // give up gracefully
+                    }
+                }
+            }
+
             _channel = _connection.CreateModel();
 
             //declare same queue, it must match publisher exactly
