@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Notifications.Api.Data;
 using Notifications.Api.Interfaces;
 using Notifications.Api.Repository;
+using Notifications.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHostedService<RabbitMQConsumer>();//register consumer
 
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
