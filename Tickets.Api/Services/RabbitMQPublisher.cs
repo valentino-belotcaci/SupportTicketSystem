@@ -8,19 +8,37 @@ namespace Tickets.Api.Services
     {
         private readonly IConnection _connection;
         private readonly IModel _channel;
+        private readonly IConfiguration _configuration;
         private const string QueueName = "ticket-events";
 
-        public RabbitMQPublisher()
+        public RabbitMQPublisher(IConfiguration configuration)
         {
+
+            _configuration = configuration;
+
             var factory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = _configuration["RabbitMQ:Host"] ?? "localhost",
                 Port = 5672,
                 UserName = "guest",
                 Password = "guest"
             };
 
-            _connection = factory.CreateConnection();
+            var retries = 5;
+            while (retries > 0)
+            {
+                try
+                {
+                    _connection = factory.CreateConnection();
+                    break;
+                }
+                catch (Exception)
+                {
+                    retries--;
+                    Thread.Sleep(3000);
+                    if (retries == 0) throw;
+                }
+            }
             _channel = _connection.CreateModel();
 
             //declare the queue(creates it if it doesn't exist)

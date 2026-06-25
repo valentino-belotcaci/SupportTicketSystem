@@ -69,6 +69,7 @@ namespace Tickets.Api.Controllers
 
         /// <summary>Updates the status of a ticket</summary>
         /// <param name="id">The ticket GUID</param>
+        /// <param name="request">The new status</param>
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromBody] UpdateStatusDto request)
         {
@@ -87,6 +88,7 @@ namespace Tickets.Api.Controllers
 
         /// <summary>Assigns a ticket to a team member</summary>
         /// <param name="id">The ticket GUID</param>
+        /// <param name="request">The new status</param>
         [HttpPatch("{id}/assign")]
         public async Task<IActionResult> AssignTicket([FromRoute] Guid id, [FromBody] AssignTicketDto request)
         {
@@ -100,6 +102,7 @@ namespace Tickets.Api.Controllers
 
         /// <summary>Updates ticket details</summary>
         /// <param name="id">The ticket GUID</param>
+        /// <param name="request">The new status</param>
         [HttpPut("{id}")] 
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTicketDto request)
         {

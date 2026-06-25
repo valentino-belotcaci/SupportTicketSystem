@@ -49,6 +49,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=tickets-db;Port=5432;Database=ticketsDB;Username=postgres;Password=${TICKETS_DB_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__Host=rabbitmq
     depends_on:
       - tickets-db
       - rabbitmq
@@ -65,6 +66,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=notifications-db;Port=5432;Database=notificationsDB;Username=postgres;Password=${NOTIFICATIONS_DB_PASSWORD}
       - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__Host=rabbitmq
     depends_on:
       - notifications-db
       - rabbitmq
