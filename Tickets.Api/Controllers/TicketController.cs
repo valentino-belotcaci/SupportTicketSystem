@@ -129,24 +129,18 @@ namespace Tickets.Api.Controllers
             return NoContent();//success
         }
 
-        /// <summary>Returns number of tickets assigned to each status</summary>
+        /// <summary>Returns ticket counts grouped by status and priority</summary>
         [HttpGet("stats")]
-        public async Task<IActionResult> GetTicketCountsGroupedByStatus(){
+        public async Task<IActionResult> GetStats()
+        {
+            var byStatus = await _ticketRepo.GetTicketCountsGroupedByStatusAsync();
+            var byPriority = await _ticketRepo.GetTicketCountsGroupedByPriorityAsync();
 
-            var result = await _ticketRepo.GetTicketCountsGroupedByStatusAsync();
-
-            return Ok(result);
-
-        }
-
-        /// <summary>Returns number of tickets assigned to each priority level</summary>
-        [HttpGet("priority")]
-        public async Task<IActionResult> GetTicketCountsGroupedByPriority(){
-
-            var result = await _ticketRepo.GetTicketCountsGroupedByPriorityAsync();
-
-            return Ok(result);
-
+            return Ok(new TicketStatsDto
+            {
+                ByStatus = byStatus,
+                ByPriority = byPriority
+            });
         }
     }
 }
