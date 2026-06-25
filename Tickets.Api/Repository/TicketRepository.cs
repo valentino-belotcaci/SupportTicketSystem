@@ -139,8 +139,8 @@ namespace Tickets.Api.Repository
 
             return ticketModel;
         }
-        
-        public async Task<IEnumerable<TicketStatusCountDto>> GetTicketCountsGroupedByStatus()
+
+        public async Task<List<TicketStatusCountDto>> GetTicketCountsGroupedByStatusAsync()
         {
             var result = await _context.Tickets
                 .GroupBy(ticket => ticket.Status)

@@ -41,7 +41,7 @@ namespace Tickets.Api.Controllers
         }
 
         /// <summary>Returns a single ticket by ID</summary>
-/// <param name="id">The ticket GUID</param>
+        /// <param name="id">The ticket GUID</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id){
             var ticket = await _ticketRepo.GetByIdAsync(id);
@@ -127,6 +127,16 @@ namespace Tickets.Api.Controllers
 
 
             return NoContent();//success
+        }
+
+        /// <summary>Returns number of tickets assigned to each status</summary>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetTicketCountsGroupedByStatus(){
+
+            var result = await _ticketRepo.GetTicketCountsGroupedByStatusAsync();
+
+            return Ok(result);
+
         }
     }
 }
