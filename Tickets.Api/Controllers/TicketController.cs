@@ -139,6 +139,7 @@ namespace Tickets.Api.Controllers
 
         }
 
+        /// <summary>Returns number of tickets assigned to each priority level</summary>
         [HttpGet("priority")]
         public async Task<IActionResult> GetTicketCountsGroupedByPriority(){
 

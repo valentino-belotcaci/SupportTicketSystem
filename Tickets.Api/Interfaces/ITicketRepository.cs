@@ -21,6 +21,6 @@ namespace Tickets.Api.Interfaces
 
         Task<List<TicketStatusCountDto>> GetTicketCountsGroupedByStatusAsync();
 
-        Task<List<TicketStatusCountDto>> GetTicketCountsGroupedByPriorityAsync();
+        Task<List<TicketPriorityCountDto>> GetTicketCountsGroupedByPriorityAsync();
     }
 }
