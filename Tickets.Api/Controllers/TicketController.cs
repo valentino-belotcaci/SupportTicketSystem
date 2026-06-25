@@ -17,6 +17,7 @@ namespace Tickets.Api.Controllers
             _ticketRepo = ticketRepo;
         }
 
+        /// <summary>Returns all tickets with optional filtering</summary>
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] TicketQuery query)
 {
@@ -39,7 +40,8 @@ namespace Tickets.Api.Controllers
             return Ok(result);
         }
 
-
+        /// <summary>Returns a single ticket by ID</summary>
+/// <param name="id">The ticket GUID</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id){
             var ticket = await _ticketRepo.GetByIdAsync(id);
@@ -50,6 +52,7 @@ namespace Tickets.Api.Controllers
             return Ok(ticket.ToTicketDto());
         }
 
+        /// <summary>Creates a new support ticket</summary>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTicketRequestDto ticketDto) {
 
@@ -64,6 +67,8 @@ namespace Tickets.Api.Controllers
             );
         }
 
+        /// <summary>Updates the status of a ticket</summary>
+        /// <param name="id">The ticket GUID</param>
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus([FromRoute] Guid id, [FromBody] UpdateStatusDto request)
         {
@@ -80,6 +85,8 @@ namespace Tickets.Api.Controllers
             return Ok(ticket!.ToTicketDto());
         }
 
+        /// <summary>Assigns a ticket to a team member</summary>
+        /// <param name="id">The ticket GUID</param>
         [HttpPatch("{id}/assign")]
         public async Task<IActionResult> AssignTicket([FromRoute] Guid id, [FromBody] AssignTicketDto request)
         {
@@ -91,6 +98,8 @@ namespace Tickets.Api.Controllers
             return Ok(ticket.ToTicketDto());
         }
 
+        /// <summary>Updates ticket details</summary>
+        /// <param name="id">The ticket GUID</param>
         [HttpPut("{id}")] 
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTicketDto request)
         {
@@ -103,6 +112,8 @@ namespace Tickets.Api.Controllers
             return Ok(ticket.ToTicketDto());
         }
 
+        /// <summary>Deletes a ticket</summary>
+        /// <param name="id">The ticket GUID</param>
         [HttpDelete("{id}")] 
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
