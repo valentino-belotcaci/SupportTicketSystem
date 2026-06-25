@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Tickets.Api.Data;
 using Tickets.Api.Interfaces;
 using Tickets.Api.Repository;
+using Tickets.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<RabbitMQPublisher>();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));

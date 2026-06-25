@@ -11,7 +11,7 @@ namespace Tickets.Api.Interfaces
 
         Task<Ticket> CreateAsync(Ticket ticketModel);
 
-        Task<Ticket> UpdateStatusAsync(Guid id, UpdateStatusDto statusDto);
+        Task<Ticket?> UpdateStatusAsync(Guid id, UpdateStatusDto statusDto);
 
         Task<Ticket?> AssignTicketAsync(Guid id, AssignTicketDto assignDto);
 
