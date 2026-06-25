@@ -6,6 +6,7 @@ using RabbitMQ.Client.Events;
 using Notifications.Api.Data;
 using Notifications.Api.Models;
 using Notifications.Api.Enums;
+using Notifications.Api.Messages;
 
 namespace Notifications.Api.Services
 {
