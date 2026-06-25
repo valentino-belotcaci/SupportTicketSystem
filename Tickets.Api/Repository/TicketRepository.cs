@@ -3,18 +3,20 @@ using Tickets.Api.Interfaces;
 using Tickets.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Tickets.Api.Dtos.Ticket;
+using Tickets.Api.Services;
+using Tickets.Api.Messages;
 
 namespace Tickets.Api.Repository
 {
     public class TicketRepository : ITicketRepository
     {
         private readonly ApplicationDBContext _context;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly RabbitMQPublisher _publisher;
         private readonly ILogger<TicketRepository> _logger;
-        public TicketRepository(ApplicationDBContext context,IHttpClientFactory httpClientFactory, ILogger<TicketRepository> logger)//dependency injection
+        public TicketRepository(ApplicationDBContext context, RabbitMQPublisher publisher, ILogger<TicketRepository> logger)//dependency injection
         {
             _context = context;
-            _httpClientFactory = httpClientFactory;//inject IHttpClientFactory into the repository
+            _publisher = publisher;//inject Ipublisher into the repository 
             _logger = logger;   
         }
 
@@ -32,36 +34,20 @@ namespace Tickets.Api.Repository
         public async Task<Ticket> CreateAsync(Ticket ticketModel)
         {
             _context.Tickets.Add(ticketModel);
+
             await _context.SaveChangesAsync();
 
-            //notify Notifications.Api
-            var client = _httpClientFactory.CreateClient();
-
-            var payload = new{
-
-                ticketId = ticketModel.Id,
-                type = 0, //0=just created
-                message = $"Ticket '{ticketModel.Title}' was created"
-            };
-
-            //send http request with payload in the body
-            //then notifications.api receives it
-            //the controller sees POST api/notifications and calls this method that actually creates the notification
-
-            try
-            {
-                await client.PostAsJsonAsync(
-                    "http://localhost:5201/api/notifications",
-                    payload
-                );
+            try{
+                _publisher.Publish(new TicketEventMessage
+                {
+                    TicketId = ticketModel.Id,
+                    Type = "Created",
+                    Message = $"Ticket '{ticketModel.Title}' was created by '{ticketModel.CreatedBy}'"
+                });
+            }catch(Exception ex){
+                _logger.LogError(ex, "Failed to publish event for ticket {TicketId}", ticketModel.Id);
             }
-            catch (Exception ex)
-            {
-                //notification failed, don't fail the ticket creation, we just log it
-                _logger.LogError(ex, "Failed to notify Notifications.Api for ticket {TicketId}", ticketModel.Id);
 
-                //in future ill use message queue (RabbitMQ) to guarantee delivery
-            }
             return ticketModel;
         }
 
@@ -79,22 +65,15 @@ namespace Tickets.Api.Repository
 
             await _context.SaveChangesAsync();
 
-            var client = _httpClientFactory.CreateClient();
-
-            var payload = new{
-                ticketId = existingTicket.Id,
-                type = 1,
-                message = $" Ticket '{existingTicket.Title}' changed status from '{oldStatus}' to '{request.Status}'"
-            };
-
-            try {
-                await client.PostAsJsonAsync(
-                    "http://localhost:5201/api/notifications",
-                    payload
-                );
-            }catch(Exception ex) {
-                _logger.LogError(ex, "Failed to notify Notifications.Api for ticket {TicketId}", existingTicket.Id);
-
+            try{
+                _publisher.Publish(new TicketEventMessage
+                {
+                    TicketId = existingTicket.Id,
+                    Type = "StatusChanged",
+                    Message = $"Ticket '{existingTicket.Title}' changed status from  '{oldStatus}' to '{request.Status}'"
+                });
+            }catch(Exception ex){
+                _logger.LogError(ex, "Failed to publish event for ticket {TicketId}", existingTicket.Id);
             }
 
             return existingTicket;
@@ -114,22 +93,15 @@ namespace Tickets.Api.Repository
 
             await _context.SaveChangesAsync();
 
-            var client = _httpClientFactory.CreateClient();
-
-            var payload = new{
-                ticketId = existingTicket.Id,
-                type = 2,
-                message = $" Ticket '{existingTicket.Title}' changed Assignment from '{oldAssignment}' to '{request.AssignedTo}'"
-            };
-
-            try {
-                await client.PostAsJsonAsync(
-                    "http://localhost:5201/api/notifications",
-                    payload
-                );
-            }catch(Exception ex) {
-                _logger.LogError(ex, "Failed to notify Notifications.Api for ticket {TicketId}", existingTicket.Id);
-
+            try{
+                _publisher.Publish(new TicketEventMessage
+                {
+                    TicketId = existingTicket.Id,
+                    Type = "StatusChanged",
+                    Message = $"Ticket '{existingTicket.Title}' changed Assignment from  '{oldAssignment}' to '{request.AssignedTo}'"
+                });
+            }catch(Exception ex){
+                _logger.LogError(ex, "Failed to publish event for ticket {TicketId}", existingTicket.Id);
             }
 
             return existingTicket;
