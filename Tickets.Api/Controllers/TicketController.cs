@@ -138,5 +138,14 @@ namespace Tickets.Api.Controllers
             return Ok(result);
 
         }
+
+        [HttpGet("priority")]
+        public async Task<IActionResult> GetTicketCountsGroupedByPriority(){
+
+            var result = await _ticketRepo.GetTicketCountsGroupedByPriorityAsync();
+
+            return Ok(result);
+
+        }
     }
 }
