@@ -38,6 +38,38 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     networks:
       - network
+  
+  tickets-api:
+    build:
+      context: ./Tickets.Api
+      dockerfile: Dockerfile
+    container_name: tickets-api
+    ports:
+      - "5112:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=tickets-db;Port=5432;Database=ticketsDB;Username=postgres;Password=${TICKETS_DB_PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - tickets-db
+      - rabbitmq
+    networks:
+      - network
+
+  notifications-api:
+    build:
+      context: ./Notifications.Api
+      dockerfile: Dockerfile
+    container_name: notifications-api
+    ports:
+      - "5201:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=notifications-db;Port=5432;Database=notificationsDB;Username=postgres;Password=${NOTIFICATIONS_DB_PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - notifications-db
+      - rabbitmq
+    networks:
+      - network
 
 networks:
   network:
