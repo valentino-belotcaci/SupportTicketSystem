@@ -154,7 +154,19 @@ namespace Tickets.Api.Repository
             return result;
         }
 
-        
+        public async Task<List<TicketPriorityCountDto>> GetTicketCountsGroupedByPriorityAsync()
+        {
+            var result = await _context.Tickets
+                .GroupBy(ticket => ticket.Priority)
+                .Select(group => new TicketPriorityCountDto
+                {
+                    Priority = group.Key,
+                    Count = group.Count()
+                })
+                .ToListAsync();
+
+            return result;
+        }
         
     }
 }
