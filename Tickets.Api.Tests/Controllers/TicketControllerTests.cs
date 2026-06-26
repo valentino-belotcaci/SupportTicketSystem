@@ -267,15 +267,12 @@ namespace Tickets.Api.Tests.Controllers
                 Title = "New ticket"
             };
 
-
             _mockRepo
                 .Setup(repo => repo.CreateAsync(It.IsAny<Ticket>()))
                 .ReturnsAsync((Ticket ticket) => ticket);
 
-
             // ACT
             var result = await _controller.Create(request);
-
 
             // ASSERT
             var created = result.Should()
@@ -289,12 +286,10 @@ namespace Tickets.Api.Tests.Controllers
         public async Task Create_ReturnsBadRequest_WhenTitleIsMissing()
         {
             // ARRANGE
-
             var request = new CreateTicketRequestDto
             {
                 Title = ""
             };
-
 
             // simulate validation failure
             _controller.ModelState.AddModelError(
@@ -302,18 +297,105 @@ namespace Tickets.Api.Tests.Controllers
                 "Title is required"
             );
 
-
             // ACT
-
             var result = await _controller.Create(request);
 
-
-
             // ASSERT
-
             result.Should()
                 .BeOfType<BadRequestObjectResult>();
         }
+
+        [Fact]
+        public async Task UpdateStatus_ReturnsOk_WhenStatusTransitionIsValid()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            var existingTicket = new Ticket
+            {
+                Id = id,
+                Status = TicketStatus.Open
+            };
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync(existingTicket);
+
+            _mockRepo
+                .Setup(repo => repo.UpdateStatusAsync(
+                    id,
+                    It.IsAny<UpdateStatusDto>()))
+                .ReturnsAsync(new Ticket
+                {
+                    Id = id,
+                    Status = TicketStatus.InProgress
+                });
+
+            // ACT
+            var result = await _controller.UpdateStatus(
+                id,
+                new UpdateStatusDto
+                {
+                    Status = TicketStatus.InProgress
+                });
+
+            // ASSERT
+            result.Should()
+                .BeOfType<OkObjectResult>();
+        }
+
+
+
+        [Fact]
+        public async Task UpdateStatus_ReturnsNotFound_WhenTicketMissing()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync((Ticket?)null);
+
+            // ACT
+            var result = await _controller.UpdateStatus(
+                id,
+                new UpdateStatusDto
+                {
+                    Status = TicketStatus.Open
+                });
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public async Task UpdateStatus_ReturnsBadRequest_WhenStatusMovesBackwards()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync(new Ticket
+                {
+                    Id = id,
+                    Status = TicketStatus.Closed
+                });
+
+            // ACT
+            var result = await _controller.UpdateStatus(
+                id,
+                new UpdateStatusDto
+                {
+                    Status = TicketStatus.Open
+                });
+
+            // ASSERT
+            result.Should()
+                .BeOfType<BadRequestObjectResult>();
+        }
+
 
     }
 }
