@@ -81,5 +81,26 @@ namespace Notifications.Api.Tests.Repository
             // ASSERT
             result.Should().BeNull();
         }
+
+        [Fact]
+        public async Task CreateAsync_SavesAndReturnsNotification()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            var notification = new Notification
+            {
+                Message = "Created notification",
+                TicketId = Guid.NewGuid()
+            };
+
+            // ACT
+            var result = await repo.CreateAsync(notification);
+
+            // ASSERT
+            result.Id.Should().NotBeEmpty();
+            context.Notifications.Should().HaveCount(1);
+        }
     }
 }
