@@ -157,5 +157,74 @@ namespace Notifications.Api.Tests.Controllers
                 .Be(201);
         }
 
+        [Fact]
+        public async Task GetTicketNotifications_ReturnsOk_WhenNotificationsExist()
+        {
+            // ARRANGE
+            var ticketId = Guid.NewGuid();
+
+            var fakeNotifications = new List<Notification>
+            {
+                new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    TicketId = ticketId,
+                    Message = "Created",
+                    Type = "Created"
+                },
+                new Notification
+                {
+                    Id = Guid.NewGuid(),
+                    TicketId = ticketId,
+                    Message = "Assigned",
+                    Type = "Assigned"
+                }
+            };
+
+            _mockRepo
+                .Setup(repo => repo.GetTicketNotificationsAsync(ticketId))
+                .ReturnsAsync(fakeNotifications);
+
+            // ACT
+            var result = await _controller.GetTicketNotifications(ticketId);
+
+            // ASSERT
+            var okResult = result.Should()
+                .BeOfType<OkObjectResult>()
+                .Subject;
+
+
+            var notifications = okResult.Value
+                .Should()
+                .BeAssignableTo<List<NotificationDto>>()
+                .Subject;
+
+
+            notifications.Should()
+                .HaveCount(2);
+
+            notifications[0].Message
+                .Should()
+                .Be("Created");
+        }
+
+        [Fact]
+        public async Task GetTicketNotifications_ReturnsNotFound_WhenNoNotificationsExist()
+        {
+            // ARRANGE
+            var ticketId = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.GetTicketNotificationsAsync(ticketId))
+                .ReturnsAsync(new List<Notification>());
+
+            // ACT
+            var result = await _controller.GetTicketNotifications(ticketId);
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
     }
 }
