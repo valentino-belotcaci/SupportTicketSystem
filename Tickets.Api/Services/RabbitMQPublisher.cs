@@ -1,10 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using RabbitMQ.Client;
+using Tickets.Api.Interfaces;
 using Tickets.Api.Messages;
+
 namespace Tickets.Api.Services
 {
-    public class RabbitMQPublisher : IDisposable
+    public class RabbitMQPublisher : IRabbitMQPublisher, IDisposable
     {
         private readonly IConnection _connection;
         private readonly IModel _channel;

@@ -3,7 +3,6 @@ using Tickets.Api.Interfaces;
 using Tickets.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Tickets.Api.Dtos.Ticket;
-using Tickets.Api.Services;
 using Tickets.Api.Messages;
 
 namespace Tickets.Api.Repository
@@ -11,9 +10,9 @@ namespace Tickets.Api.Repository
     public class TicketRepository : ITicketRepository
     {
         private readonly ApplicationDBContext _context;
-        private readonly RabbitMQPublisher _publisher;
+        private readonly IRabbitMQPublisher _publisher;
         private readonly ILogger<TicketRepository> _logger;
-        public TicketRepository(ApplicationDBContext context, RabbitMQPublisher publisher, ILogger<TicketRepository> logger)//dependency injection
+        public TicketRepository(ApplicationDBContext context, IRabbitMQPublisher publisher, ILogger<TicketRepository> logger)//dependency injection
         {
             _context = context;
             _publisher = publisher;//inject Ipublisher into the repository 

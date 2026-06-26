@@ -13,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<RabbitMQPublisher>();
+builder.Services.AddSingleton<IRabbitMQPublisher, RabbitMQPublisher>();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
