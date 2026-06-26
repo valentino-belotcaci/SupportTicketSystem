@@ -199,5 +199,58 @@ namespace Tickets.Api.Tests.Repository
             // ASSERT
             result.Should().BeNull();
         }
+
+        [Fact]
+        public async Task UpdateAsync_UpdatesFieldsCorrectly()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var ticket = new Ticket
+            {
+                Title = "Old",
+                Description = "Old desc"
+            };
+
+            context.Tickets.Add(ticket);
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            var request = new UpdateTicketDto
+            {
+                Title = "New",
+                Description = "New desc",
+                Priority = TicketPriority.High,
+                Category = TicketCategory.Bug,
+                AssignedTo = "Mike"
+            };
+
+            // ACT
+            var result = await repo.UpdateAsync(ticket.Id, request);
+
+            // ASSERT
+            result!.Title.Should().Be("New");
+            result.Description.Should().Be("New desc");
+            result.Priority.Should().Be(TicketPriority.High);
+            result.Category.Should().Be(TicketCategory.Bug);
+            result.AssignedTo.Should().Be("Mike");
+        }
+
+        [Fact]
+        public async Task UpdateAsync_ReturnsNull_WhenNotFound()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.UpdateAsync(
+                Guid.NewGuid(),
+                new UpdateTicketDto());
+
+            // ASSERT
+            result.Should().BeNull();
+        }
     }
 }
