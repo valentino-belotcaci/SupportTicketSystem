@@ -108,5 +108,51 @@ namespace Tickets.Api.Tests.Repository
             result.Id.Should().NotBeEmpty();
             context.Tickets.Should().HaveCount(1);
         }
+
+        [Fact]
+        public async Task UpdateStatusAsync_UpdatesStatusCorrectly()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var ticket = new Ticket
+            {
+                Title = "Test",
+                Status = TicketStatus.Open
+            };
+
+            context.Tickets.Add(ticket);
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            var request = new UpdateStatusDto
+            {
+                Status = TicketStatus.InProgress
+            };
+
+            // ACT
+            var result = await repo.UpdateStatusAsync(ticket.Id, request);
+
+            // ASSERT
+            result.Should().NotBeNull();
+            result!.Status.Should().Be(TicketStatus.InProgress);
+        }
+
+        [Fact]
+        public async Task UpdateStatusAsync_ReturnsNull_WhenNotFound()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.UpdateStatusAsync(
+                Guid.NewGuid(),
+                new UpdateStatusDto { Status = TicketStatus.Closed });
+
+            // ASSERT
+            result.Should().BeNull();
+        }
     }
 }
