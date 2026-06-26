@@ -87,5 +87,26 @@ namespace Tickets.Api.Tests.Repository
             // ASSERT
             result.Should().BeNull();
         }
+
+        [Fact]
+        public async Task CreateAsync_SavesAndReturnsTicket()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            var ticket = new Ticket
+            {
+                Title = "New Ticket",
+                CreatedBy = "Tester"
+            };
+
+            // ACT
+            var result = await repo.CreateAsync(ticket);
+
+            // ASSERT
+            result.Id.Should().NotBeEmpty();
+            context.Tickets.Should().HaveCount(1);
+        }
     }
 }
