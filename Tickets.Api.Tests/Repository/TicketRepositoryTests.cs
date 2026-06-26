@@ -52,5 +52,40 @@ namespace Tickets.Api.Tests.Repository
             // ASSERT
             result.Should().HaveCount(2);
         }
+
+        [Fact]
+        public async Task GetByIdAsync_ReturnsTicket_WhenExists()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var ticket = new Ticket { Title = "Test" };
+            context.Tickets.Add(ticket);
+
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.GetByIdAsync(ticket.Id);
+
+            // ASSERT
+            result.Should().NotBeNull();
+            result!.Title.Should().Be("Test");
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_ReturnsNull_WhenNotFound()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.GetByIdAsync(Guid.NewGuid());
+
+            // ASSERT
+            result.Should().BeNull();
+        }
     }
 }
