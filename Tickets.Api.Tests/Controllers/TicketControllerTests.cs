@@ -203,5 +203,60 @@ namespace Tickets.Api.Tests.Controllers
             tickets.Should().HaveCount(1);
             tickets[0].Category.Should().Be(TicketCategory.Bug);
         }
+
+        [Fact]
+        public async Task GetById_ReturnsOk_WhenTicketExists()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            var ticket = new Ticket
+            {
+                Id = id,
+                Title = "Test ticket"
+            };
+
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync(ticket);
+
+
+            // ACT
+            var result = await _controller.GetById(id);
+
+            // ASSERT
+            var okResult = result.Should()
+                .BeOfType<OkObjectResult>()
+                .Subject;
+
+            var dto = okResult.Value
+                .Should()
+                .BeOfType<TicketDto>()
+                .Subject;
+
+            dto.Title.Should().Be("Test ticket");
+        }
+
+
+
+        [Fact]
+        public async Task GetById_ReturnsNotFound_WhenTicketDoesNotExist()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync((Ticket?)null);
+
+            // ACT
+            var result = await _controller.GetById(id);
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
     }
 }
