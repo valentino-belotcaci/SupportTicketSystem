@@ -128,5 +128,34 @@ namespace Notifications.Api.Tests.Controllers
                 .BeOfType<NotFoundResult>();
         }
 
+        [Fact]
+        public async Task Create_ReturnsCreated_WhenNotificationIsValid()
+        {
+            // ARRANGE
+
+            var request = new CreateNotificationRequestDto
+            {
+                TicketId = Guid.NewGuid(),
+                Message = "New notification",
+                Type = "Created"
+            };
+
+            _mockRepo
+                .Setup(repo => repo.CreateAsync(It.IsAny<Notification>()))
+                .ReturnsAsync((Notification notification) => notification);
+
+            // ACT
+            var result = await _controller.Create(request);
+
+            // ASSERT
+            var created = result.Should()
+                .BeOfType<CreatedAtActionResult>()
+                .Subject;
+
+            created.StatusCode
+                .Should()
+                .Be(201);
+        }
+
     }
 }
