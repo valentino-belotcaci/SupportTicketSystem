@@ -154,5 +154,50 @@ namespace Tickets.Api.Tests.Repository
             // ASSERT
             result.Should().BeNull();
         }
+
+        [Fact]
+        public async Task AssignTicketAsync_UpdatesAssignee()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var ticket = new Ticket
+            {
+                Title = "Test",
+                AssignedTo = null
+            };
+
+            context.Tickets.Add(ticket);
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            var request = new AssignTicketDto
+            {
+                AssignedTo = "John"
+            };
+
+            // ACT
+            var result = await repo.AssignTicketAsync(ticket.Id, request);
+
+            // ASSERT
+            result!.AssignedTo.Should().Be("John");
+        }
+
+        [Fact]
+        public async Task AssignTicketAsync_ReturnsNull_WhenNotFound()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.AssignTicketAsync(
+                Guid.NewGuid(),
+                new AssignTicketDto { AssignedTo = "John" });
+
+            // ASSERT
+            result.Should().BeNull();
+        }
     }
 }
