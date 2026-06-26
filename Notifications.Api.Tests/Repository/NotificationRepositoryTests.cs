@@ -102,5 +102,45 @@ namespace Notifications.Api.Tests.Repository
             result.Id.Should().NotBeEmpty();
             context.Notifications.Should().HaveCount(1);
         }
+
+        [Fact]
+        public async Task GetTicketNotificationsAsync_ReturnsNotificationsForCorrectTicket()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var ticketId = Guid.NewGuid();
+
+            context.Notifications.AddRange(
+                new Notification { TicketId = ticketId, Message = "N1" },
+                new Notification { TicketId = ticketId, Message = "N2" },
+                new Notification { TicketId = Guid.NewGuid(), Message = "Other ticket" }
+            );
+
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.GetTicketNotificationsAsync(ticketId);
+
+            // ASSERT
+            result.Should().HaveCount(2);
+            result.All(n => n.TicketId == ticketId).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task GetTicketNotificationsAsync_ReturnsEmptyList_WhenNoneExist()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.GetTicketNotificationsAsync(Guid.NewGuid());
+
+            // ASSERT
+            result.Should().BeEmpty();
+        }
     }
 }
