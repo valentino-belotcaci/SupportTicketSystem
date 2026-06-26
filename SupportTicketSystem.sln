@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tickets.Api", "Tickets.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Api", "Notifications.Api\Notifications.Api.csproj", "{99A3182D-400E-4E6A-B5E3-CDE5796F4170}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tickets.Api.Tests", "Tickets.Api.Tests\Tickets.Api.Tests.csproj", "{10879E7A-7F4A-4679-8C33-DE008543D23F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.Api.Tests", "Notifications.Api.Tests\Notifications.Api.Tests.csproj", "{95209E0A-C2AE-453C-9FFD-D2B65A373944}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{99A3182D-400E-4E6A-B5E3-CDE5796F4170}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99A3182D-400E-4E6A-B5E3-CDE5796F4170}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99A3182D-400E-4E6A-B5E3-CDE5796F4170}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10879E7A-7F4A-4679-8C33-DE008543D23F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10879E7A-7F4A-4679-8C33-DE008543D23F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10879E7A-7F4A-4679-8C33-DE008543D23F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10879E7A-7F4A-4679-8C33-DE008543D23F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95209E0A-C2AE-453C-9FFD-D2B65A373944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95209E0A-C2AE-453C-9FFD-D2B65A373944}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95209E0A-C2AE-453C-9FFD-D2B65A373944}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95209E0A-C2AE-453C-9FFD-D2B65A373944}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
