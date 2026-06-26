@@ -396,6 +396,53 @@ namespace Tickets.Api.Tests.Controllers
                 .BeOfType<BadRequestObjectResult>();
         }
 
+        [Fact]
+        public async Task AssignTicket_ReturnsOk_WhenSuccessful()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.AssignTicketAsync(
+                    id,
+                    It.IsAny<AssignTicketDto>()))
+                .ReturnsAsync(new Ticket
+                {
+                    Id = id
+                });
+
+            // ACT
+            var result = await _controller.AssignTicket(
+                id,
+                new AssignTicketDto());
+
+            // ASSERT
+            result.Should()
+                .BeOfType<OkObjectResult>();
+        }
+
+        [Fact]
+        public async Task AssignTicket_ReturnsNotFound_WhenMissing()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.AssignTicketAsync(
+                    id,
+                    It.IsAny<AssignTicketDto>()))
+                .ReturnsAsync((Ticket?)null);
+
+            // ACT
+            var result = await _controller.AssignTicket(
+                id,
+                new AssignTicketDto());
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
 
     }
 }
