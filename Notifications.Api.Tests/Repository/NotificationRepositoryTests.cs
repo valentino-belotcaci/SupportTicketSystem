@@ -43,5 +43,43 @@ namespace Notifications.Api.Tests.Repository
             // ASSERT
             result.Should().HaveCount(2);
         }
+
+        [Fact]
+        public async Task GetByIdAsync_ReturnsCorrectNotification()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var notification = new Notification
+            {
+                Message = "Test notification"
+            };
+
+            context.Notifications.Add(notification);
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.GetByIdAsync(notification.Id);
+
+            // ASSERT
+            result.Should().NotBeNull();
+            result!.Message.Should().Be("Test notification");
+        }
+
+        [Fact]
+        public async Task GetByIdAsync_ReturnsNull_WhenNotFound()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.GetByIdAsync(Guid.NewGuid());
+
+            // ASSERT
+            result.Should().BeNull();
+        }
     }
 }
