@@ -75,5 +75,58 @@ namespace Notifications.Api.Tests.Controllers
                 .Be("Status changed");
         }
 
+        [Fact]
+        public async Task GetById_ReturnsOk_WhenNotificationExists()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            var notification = new Notification
+            {
+                Id = id,
+                Message = "Test notification",
+                Type = "Created"
+            };
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync(notification);
+
+            // ACT
+            var result = await _controller.GetById(id);
+
+            // ASSERT
+            var okResult = result.Should()
+                .BeOfType<OkObjectResult>()
+                .Subject;
+
+            var dto = okResult.Value
+                .Should()
+                .BeOfType<NotificationDto>()
+                .Subject;
+
+            dto.Message
+                .Should()
+                .Be("Test notification");
+        }
+
+        [Fact]
+        public async Task GetById_ReturnsNotFound_WhenNotificationDoesNotExist()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.GetByIdAsync(id))
+                .ReturnsAsync((Notification?)null);
+
+            // ACT
+            var result = await _controller.GetById(id);
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
     }
 }
