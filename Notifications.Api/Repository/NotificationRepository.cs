@@ -3,7 +3,6 @@ using Notifications.Api.Data;
 using Notifications.Api.Interfaces;
 using Notifications.Api.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Notifications.Api.Repository
 {
