@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Notifications.Api.Controllers;
 using Notifications.Api.Dtos;
+using Notifications.Api.Enums;
 using Notifications.Api.Interfaces;
 using Notifications.Api.Models;
 
@@ -36,14 +37,14 @@ namespace Notifications.Api.Tests.Controllers
                     Id = Guid.NewGuid(),
                     TicketId = Guid.NewGuid(),
                     Message = "Ticket created",
-                    Type = "Created"
+                    Type = NotificationType.Created
                 },
                 new Notification
                 {
                     Id = Guid.NewGuid(),
                     TicketId = Guid.NewGuid(),
                     Message = "Status changed",
-                    Type = "StatusChanged"
+                    Type = NotificationType.StatusChanged
                 }
             };
 
@@ -85,7 +86,7 @@ namespace Notifications.Api.Tests.Controllers
             {
                 Id = id,
                 Message = "Test notification",
-                Type = "Created"
+                Type = NotificationType.Created
             };
 
             _mockRepo
@@ -137,7 +138,7 @@ namespace Notifications.Api.Tests.Controllers
             {
                 TicketId = Guid.NewGuid(),
                 Message = "New notification",
-                Type = "Created"
+                Type = NotificationType.Created
             };
 
             _mockRepo
@@ -170,14 +171,14 @@ namespace Notifications.Api.Tests.Controllers
                     Id = Guid.NewGuid(),
                     TicketId = ticketId,
                     Message = "Created",
-                    Type = "Created"
+                    Type = NotificationType.Created
                 },
                 new Notification
                 {
                     Id = Guid.NewGuid(),
                     TicketId = ticketId,
                     Message = "Assigned",
-                    Type = "Assigned"
+                    Type = NotificationType.Assigned
                 }
             };
 
