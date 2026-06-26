@@ -9,6 +9,7 @@ using Tickets.Api.Models;
 using Tickets.Api.Repository;
 using Tickets.Api.Dtos.Ticket;
 
+
 namespace Tickets.Api.Tests.Repository
 {
     public class TicketRepositoryTests
