@@ -509,6 +509,45 @@ namespace Tickets.Api.Tests.Controllers
                 .BeOfType<NotFoundResult>();
         }
 
+        [Fact]
+        public async Task Delete_ReturnsNoContent_WhenTicketExists()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.DeleteAsync(id))
+                .ReturnsAsync(new Ticket
+                {
+                    Id = id
+                });
+
+            // ACT
+            var result = await _controller.Delete(id);
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NoContentResult>();
+        }
+
+        [Fact]
+        public async Task Delete_ReturnsNotFound_WhenTicketDoesNotExist()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            _mockRepo
+                .Setup(repo => repo.DeleteAsync(id))
+                .ReturnsAsync((Ticket?)null);
+
+            // ACT
+            var result = await _controller.Delete(id);
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
 
     }
 }
