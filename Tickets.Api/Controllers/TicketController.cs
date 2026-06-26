@@ -56,6 +56,9 @@ namespace Tickets.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTicketRequestDto ticketDto) {
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var ticketModel = ticketDto.ToTicketFromCreateDto();
             
             await _ticketRepo.CreateAsync(ticketModel);

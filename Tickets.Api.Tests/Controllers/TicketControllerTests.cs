@@ -258,5 +258,62 @@ namespace Tickets.Api.Tests.Controllers
                 .BeOfType<NotFoundResult>();
         }
 
+        [Fact]
+        public async Task Create_ReturnsCreated_WhenTicketIsValid()
+        {
+            // ARRANGE
+            var request = new CreateTicketRequestDto
+            {
+                Title = "New ticket"
+            };
+
+
+            _mockRepo
+                .Setup(repo => repo.CreateAsync(It.IsAny<Ticket>()))
+                .ReturnsAsync((Ticket ticket) => ticket);
+
+
+            // ACT
+            var result = await _controller.Create(request);
+
+
+            // ASSERT
+            var created = result.Should()
+                .BeOfType<CreatedAtActionResult>()
+                .Subject;
+
+            created.StatusCode.Should().Be(201);
+        }
+
+        [Fact]
+        public async Task Create_ReturnsBadRequest_WhenTitleIsMissing()
+        {
+            // ARRANGE
+
+            var request = new CreateTicketRequestDto
+            {
+                Title = ""
+            };
+
+
+            // simulate validation failure
+            _controller.ModelState.AddModelError(
+                "Title",
+                "Title is required"
+            );
+
+
+            // ACT
+
+            var result = await _controller.Create(request);
+
+
+
+            // ASSERT
+
+            result.Should()
+                .BeOfType<BadRequestObjectResult>();
+        }
+
     }
 }
