@@ -443,6 +443,72 @@ namespace Tickets.Api.Tests.Controllers
                 .BeOfType<NotFoundResult>();
         }
 
+        [Fact]
+        public async Task Update_ReturnsOk_WhenTicketExists()
+        {
+            // ARRANGE
+
+            var id = Guid.NewGuid();
+
+            var request = new UpdateTicketDto
+            {
+                Title = "Updated title",
+                Description = "Updated description"
+            };
+
+            _mockRepo
+                .Setup(repo => repo.UpdateAsync(
+                    id,
+                    request))
+                .ReturnsAsync(new Ticket
+                {
+                    Id = id,
+                    Title = "Updated title"
+                });
+
+
+            // ACT
+            var result = await _controller.Update(id, request);
+
+            // ASSERT
+
+            var okResult = result.Should()
+                .BeOfType<OkObjectResult>()
+                .Subject;
+
+            var ticket = okResult.Value
+                .Should()
+                .BeOfType<TicketDto>()
+                .Subject;
+
+            ticket.Title.Should().Be("Updated title");
+        }
+
+        [Fact]
+        public async Task Update_ReturnsNotFound_WhenTicketDoesNotExist()
+        {
+            // ARRANGE
+            var id = Guid.NewGuid();
+
+            var request = new UpdateTicketDto
+            {
+                Title = "Updated"
+            };
+
+            _mockRepo
+                .Setup(repo => repo.UpdateAsync(
+                    id,
+                    request))
+                .ReturnsAsync((Ticket?)null);
+
+            // ACT
+            var result = await _controller.Update(id, request);
+
+            // ASSERT
+            result.Should()
+                .BeOfType<NotFoundResult>();
+        }
+
 
     }
 }
