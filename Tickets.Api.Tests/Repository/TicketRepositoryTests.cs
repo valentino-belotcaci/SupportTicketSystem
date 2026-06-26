@@ -252,5 +252,40 @@ namespace Tickets.Api.Tests.Repository
             // ASSERT
             result.Should().BeNull();
         }
+
+        [Fact]
+        public async Task DeleteAsync_RemovesTicketAndReturnsIt()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+
+            var ticket = new Ticket { Title = "Delete me" };
+
+            context.Tickets.Add(ticket);
+            await context.SaveChangesAsync();
+
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.DeleteAsync(ticket.Id);
+
+            // ASSERT
+            result.Should().NotBeNull();
+            context.Tickets.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ReturnsNull_WhenNotFound()
+        {
+            // ARRANGE
+            var context = GetDbContext();
+            var repo = CreateRepo(context);
+
+            // ACT
+            var result = await repo.DeleteAsync(Guid.NewGuid());
+
+            // ASSERT
+            result.Should().BeNull();
+        }
     }
 }
