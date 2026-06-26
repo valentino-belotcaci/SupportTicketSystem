@@ -548,6 +548,72 @@ namespace Tickets.Api.Tests.Controllers
                 .BeOfType<NotFoundResult>();
         }
 
+        [Fact]
+        public async Task GetStats_ReturnsStatusAndPriorityCounts()
+        {
+            // ARRANGE
+            var statusCounts = new List<TicketStatusCountDto>
+            {
+                new TicketStatusCountDto
+                {
+                    Status = TicketStatus.Open,
+                    Count = 5
+                },
+                new TicketStatusCountDto
+                {
+                    Status = TicketStatus.Closed,
+                    Count = 2
+                }
+            };
+
+            var priorityCounts = new List<TicketPriorityCountDto>
+            {
+                new TicketPriorityCountDto
+                {
+                    Priority = TicketPriority.High,
+                    Count = 3
+                },
+                new TicketPriorityCountDto
+                {
+                    Priority = TicketPriority.Low,
+                    Count = 4
+                }
+            };
+
+            _mockRepo
+                .Setup(repo => repo.GetTicketCountsGroupedByStatusAsync())
+                .ReturnsAsync(statusCounts);
+
+            _mockRepo
+                .Setup(repo => repo.GetTicketCountsGroupedByPriorityAsync())
+                .ReturnsAsync(priorityCounts);
+
+            // ACT
+            var result = await _controller.GetStats();
+
+            // ASSERT
+            var okResult = result.Should()
+                .BeOfType<OkObjectResult>()
+                .Subject;
+
+            var stats = okResult.Value
+                .Should()
+                .BeOfType<TicketStatsDto>()
+                .Subject;
+
+            stats.ByStatus.Should().HaveCount(2);
+
+            stats.ByPriority.Should().HaveCount(2);
+
+            stats.ByStatus[0].Status
+                .Should()
+                .Be(TicketStatus.Open);
+
+            stats.ByPriority[0].Priority
+                .Should()
+                .Be(TicketPriority.High);
+        }
+
 
     }
 }
